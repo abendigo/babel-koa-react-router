@@ -1,0 +1,35 @@
+{
+  "name": "routes",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "babel": {
+    "blacklist": [
+      "regenerator"
+    ]
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:vendor.js": "browserify -r react -r react-dom -r react-router -r history > vendor.js",
+    "build:bundle.js": "browserify --no-bundle-external dist/app.js > bundle.js",
+    "build:dist": "babel src --out-dir dist --source-maps inline",
+    "clean": "rimraf dist",
+    "prestart": "npm run build:dist",
+    "start": "node dist/server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "babel": "^5.8.23",
+    "browserify": "^11.2.0",
+    "rimraf": "^2.4.3"
+  },
+  "dependencies": {
+    "history": "^1.12.5",
+    "koa": "^1.1.0",
+    "koa-favicon": "^1.2.0",
+    "react": "^0.14.0",
+    "react-dom": "^0.14.0",
+    "react-router": "^1.0.0-rc3"
+  }
+}

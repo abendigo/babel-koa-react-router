@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://cdn.jsdelivr.net/react/0.14.0-rc1/react.js"></script>
+    <script src="https://cdn.jsdelivr.net/react/0.14.0-rc1/react-dom.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-router/0.13.3/ReactRouter.js"></script>
+  </head>
+  <body>
+    <div id="app"></div>
+
+    <script>
+const App = React.createClass({
+    render: function() {
+        return React.createElement('div', {},
+            React.createElement('ul', {},
+                React.createElement('li', {}, 'About'),
+                React.createElement('li', {}, 'Inbox')
+            ),
+            this.props.children
+        );
+    }
+});
+const Dashboard = React.createClass({
+    render: function() {return React.createElement('div', {}, 'Dashboard');}
+});
+const About = React.createClass({
+    render: function() {return React.createElement('div', {}, 'About');}
+});
+const Inbox = React.createClass({
+    render: function() {return React.createElement('div', {}, 'Inbox');}
+});
+const Message = React.createClass({
+    render: function() {return React.createElement('div', {}, 'Message');}
+});
+const routes = [
+    {path: '/',
+        component: App,
+        indexRoute: { component: Dashboard },
+        childRoutes: [
+          { path: 'about', component: About },
+          { path: 'inbox',
+            component: Inbox,
+            childRoutes: [
+              { path: '/messages/:id', component: Message },
+              { path: 'messages/:id',
+                onEnter: function (nextState, replaceState) {
+                  replaceState(null, '/messages/' + nextState.params.id)
+                }
+              }
+            ]
+          }
+        ]
+      }
+];
+
+ReactRouter.run(routes, function(handler) {
+//ReactDOM.render(React.createElement(App), document.getElementById('app'));
+    console.log(handler);
+    ReactDOM.render(React.createElement(App), document.getElementById('app'));
+});
+    </script>
+  </body>
+</html>
