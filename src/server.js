@@ -7,6 +7,19 @@ import React from 'react';
 
 import routes from './common/routes';
 
+function template(app) {
+    return `<!DOCTYPE html>
+        <html>
+            <head>
+                <script src='/vendor.js'></script>
+            </head>
+            <body>
+                <div id='app'>${app}</div>
+                <script src='/bundle.js'></script>
+            </body>
+        </html>`;
+}
+
 var app = koa();
 
 app.use(function*(next) {
@@ -18,23 +31,15 @@ app.use(function*(next) {
 
 app.use(function* (next) {
     let notFound = false;
-    match({routes: routes, location: this.url}, function(error, redirect, props) {
+    match({routes: routes,
+           location: this.url}, function(error, redirect, props) {
         if (error) {
             this.throw(error.message);
         } else if (redirect) {
             this.redirect(redirect.pathname + redirect.search);
         } else if (props) {
-            this.body = `<!DOCTYPE html>
-<html>
-  <head>
-    <script src='vendor.js'></script>
-  </head>
-  <body>
-    <div id="app">${ReactDOMServer.renderToString(React.createElement(
-        RoutingContext, props))}</div>
-    <script src='bundle.js'></script>
-  </body>
-</html>`;
+            this.body = template(ReactDOMServer.renderToString(
+                React.createElement(RoutingContext, props)));
         } else {
             notFound = true;
         }
