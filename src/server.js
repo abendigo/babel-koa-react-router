@@ -1,4 +1,4 @@
-import favicon from 'koa-favicon';
+import koaStatic from 'koa-static';
 import koa from 'koa';
 
 import {match, RoutingContext} from 'react-router';
@@ -9,29 +9,42 @@ import routes from './common/routes';
 
 var app = koa();
 
-app.use(favicon(__dirname + '/favicon.ico'));
-
-app.use(function* (next) {
-    if ('/foo' !== this.path) {
-        return yield next;
-    }
-
-    this.body = 'foo';
+app.use(function*(next) {
+    var start = new Date;
+    yield next;
+    var ms = new Date - start;
+    console.log('logging %s %s - %s', this.method, this.url, ms);
 });
 
 app.use(function* (next) {
-    console.log('url', this.url);
+    let notFound = false;
     match({routes: routes, location: this.url}, function(error, redirect, props) {
         if (error) {
             this.throw(error.message);
         } else if (redirect) {
             this.redirect(redirect.pathname + redirect.search);
         } else if (props) {
-            this.body = ReactDOMServer.renderToString(React.createElement(RoutingContext, props));
+            this.body = `<!DOCTYPE html>
+<html>
+  <head>
+    <script src='vendor.js'></script>
+  </head>
+  <body>
+    <div id="app">${ReactDOMServer.renderToString(React.createElement(
+        RoutingContext, props))}</div>
+    <script src='bundle.js'></script>
+  </body>
+</html>`;
         } else {
-            this.body = 'wow, how did that happen?';
+            notFound = true;
         }
     }.bind(this));
+
+    if (notFound) {
+        yield next;
+    }
 });
+
+app.use(koaStatic('dist'));
 
 app.listen(3001);
