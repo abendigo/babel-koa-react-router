@@ -11,12 +11,13 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
 
+    "build:templates.js": "handlebars -c handlebars templates -f dist/templates.js && echo module.exports = templates; >> dist/templates.js",
     "build:vendor.js": "browserify -r react -r react-dom -r react-router -r history -o dist/vendor.js",
     "build:bundle.js": "browserify --no-bundle-external -d -e src/browser.js -t [ babelify --sourceMapRelative . ] -o dist/bundle.js",
     "build:compile": "babel src --out-dir dist",
 
     "prebuild": "npm run clean",
-    "build": "npm run build:compile && npm run build:vendor.js && npm run build:bundle.js",
+    "build": "npm run build:compile && npm run build:templates.js && npm run build:vendor.js && npm run build:bundle.js",
 
     "clean": "rimraf dist",
 
@@ -28,6 +29,7 @@
     "babel": "^5.8.23",
     "babelify": "^6.3.0",
     "browserify": "^11.2.0",
+    "handlebars": "^4.0.3",
     "history": "^1.12.5",
     "rimraf": "^2.4.3"
   },
