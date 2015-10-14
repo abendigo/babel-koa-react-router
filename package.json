@@ -2,7 +2,7 @@
   "name": "routes",
   "version": "0.0.0",
   "description": "",
-  "main": "index.js",
+  "repository": "abendigo/babel-koa-react-router",
   "babel": {
     "blacklist": [
       "regenerator"
@@ -23,7 +23,7 @@
 
     "start": "node dist/server.js"
   },
-  "author": "",
+  "author": "Mark Oosterveld <mark@oosterveld.org>",
   "license": "ISC",
   "devDependencies": {
     "babel": "^5.8.23",
