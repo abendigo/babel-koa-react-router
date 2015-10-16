@@ -17,6 +17,12 @@ app.use(function*(next) {
     console.log(`-- ${this.method} ${this.url} - ${ms}`);
 });
 
+if (app.env === 'development') {
+    app.use(require('koa-livereload')());
+
+    require('livereload').createServer().watch('dist');
+}
+
 app.use(function* (next) {
     let notFound = false;
     match({routes: routes,

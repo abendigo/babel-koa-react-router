@@ -44,12 +44,12 @@
     "watch:all": "concurrent \"npm run watch:browser\" \"npm run watch:server\"",
 
     "prenodemon": "wait-on -v dist/server/server.js",
-    "nodemon": "set NODE_ENV=\"development\" && nodemon --watch dist/server",
+    "nodemon": "set NODE_ENV=development&& nodemon --watch dist/server/server.js",
 
     "prewatch": "npm run prebuild",
     "watch": "concurrent \"npm run watch:browser\" \"npm run watch:server\" \"npm run nodemon",
 
-    "start": "set NODE_ENV=\"production\" && node dist/server/server.js"
+    "start": "set NODE_ENV=production&& node dist/server/server.js"
   },
   "author": "Mark Oosterveld <mark@oosterveld.org>",
   "license": "ISC",
@@ -60,6 +60,8 @@
     "concurrently": "^0.1.1",
     "handlebars": "^4.0.3",
     "history": "^1.12.5",
+    "koa-livereload": "^0.1.23",
+    "livereload": "^0.3.7",
     "mkdirp": "^0.5.1",
     "nodemon": "^1.7.1",
     "rimraf": "^2.4.3",
