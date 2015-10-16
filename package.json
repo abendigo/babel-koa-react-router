@@ -2,6 +2,7 @@
   "name": "routes",
   "version": "0.0.0",
   "description": "",
+  "main": "dist/server/server.js",
   "repository": "abendigo/babel-koa-react-router",
   "babel": {
     "blacklist": [
@@ -11,17 +12,43 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
 
-    "build:templates.js": "handlebars -c handlebars templates -f dist/templates.js && echo module.exports = templates; >> dist/templates.js",
-    "build:vendor.js": "browserify -r react -r react-dom -r react-router -r history -o dist/vendor.js",
-    "build:bundle.js": "browserify --no-bundle-external -d -e src/browser.js -t [ babelify --sourceMapRelative . ] -o dist/bundle.js",
-    "build:compile": "babel src --out-dir dist",
-
-    "prebuild": "npm run clean",
-    "build": "npm run build:compile && npm run build:templates.js && npm run build:vendor.js && npm run build:bundle.js",
-
+    "mkdir": "mkdirp dist/browser dist/server",
     "clean": "rimraf dist",
 
-    "start": "node dist/server.js"
+    "build:vendor.js": "browserify -r react -r react-dom -r react-router -r history -o dist/browser/vendor.js",
+
+    "build:bundle.js": "browserify --no-bundle-external -d -e src/browser.js -t [ babelify --sourceMapRelative . ] -o dist/browser/bundle.js",
+    "watch:bundle.js": "watchify --no-bundle-external -d -e src/browser.js -t [ babelify --sourceMapRelative . ] -o dist/browser/bundle.js -v",
+
+    "build:templates.js": "handlebars -c handlebars templates -f dist/server/templates.js && echo module.exports = templates; >> dist/server/templates.js",
+    "watch:templates.js": "watch \"npm run build:templates.js\" templates",
+
+    "build:server.js": "babel src/server.js --out-file dist/server/server.js",
+    "watch:server.js": "npm run build:server.js -- -w",
+
+    "build:common": "babel src/common --out-dir dist/server/common",
+    "watch:common": "npm run build:common -- -w",
+
+    "prebuild:browser": "npm run build:vendor.js",
+    "build:browser": "npm run build:bundle.js",
+
+    "prewatch:browser": "npm run build:vendor.js",
+    "watch:browser": "npm run watch:bundle.js",
+
+    "build:server": "npm run build:common && npm run build:server.js && npm run build:templates.js",
+    "watch:server": "concurrent \"npm run watch:common\" \"npm run watch:server.js\" \"npm run watch:templates.js\"",
+
+    "prebuild": "npm run clean && npm run mkdir",
+    "build": "npm run build:server && npm run build:browser",
+
+    "watch:all": "concurrent \"npm run watch:browser\" \"npm run watch:server\"",
+
+    "wait": "wait-on -v dist/server/server.js && nodemon --watch dist/server",
+
+    "prewatch": "npm run prebuild",
+    "watch": "concurrent \"npm run watch:browser\" \"npm run watch:server\" \"npm run wait",
+
+    "start": "node dist/server/server.js"
   },
   "author": "Mark Oosterveld <mark@oosterveld.org>",
   "license": "ISC",
@@ -29,9 +56,15 @@
     "babel": "^5.8.23",
     "babelify": "^6.3.0",
     "browserify": "^11.2.0",
+    "concurrently": "^0.1.1",
     "handlebars": "^4.0.3",
     "history": "^1.12.5",
-    "rimraf": "^2.4.3"
+    "mkdirp": "^0.5.1",
+    "nodemon": "^1.7.1",
+    "rimraf": "^2.4.3",
+    "wait-on": "^1.2.0",
+    "watch": "^0.16.0",
+    "watchify": "^3.4.0"
   },
   "dependencies": {
     "koa": "^1.1.0",

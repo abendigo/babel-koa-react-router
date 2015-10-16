@@ -14,7 +14,7 @@ app.use(function*(next) {
     var start = new Date;
     yield next;
     var ms = new Date - start;
-    console.log('logging %s %s - %s', this.method, this.url, ms);
+    console.log(`-- ${this.method} ${this.url} - ${ms}`);
 });
 
 app.use(function* (next) {
@@ -26,7 +26,7 @@ app.use(function* (next) {
         } else if (redirect) {
             this.redirect(redirect.pathname + redirect.search);
         } else if (props) {
-            this.body = templates['index'](ReactDOMServer.renderToString(
+            this.body = templates.index(ReactDOMServer.renderToString(
                 React.createElement(RoutingContext, props)));
         } else {
             notFound = true;
@@ -38,6 +38,6 @@ app.use(function* (next) {
     }
 });
 
-app.use(koaStatic('dist'));
+app.use(koaStatic('dist/browser'));
 
 app.listen(3001);
