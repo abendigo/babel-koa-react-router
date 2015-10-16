@@ -43,12 +43,13 @@
 
     "watch:all": "concurrent \"npm run watch:browser\" \"npm run watch:server\"",
 
-    "wait": "wait-on -v dist/server/server.js && nodemon --watch dist/server",
+    "prenodemon": "wait-on -v dist/server/server.js",
+    "nodemon": "set NODE_ENV=\"development\" && nodemon --watch dist/server",
 
     "prewatch": "npm run prebuild",
-    "watch": "concurrent \"npm run watch:browser\" \"npm run watch:server\" \"npm run wait",
+    "watch": "concurrent \"npm run watch:browser\" \"npm run watch:server\" \"npm run nodemon",
 
-    "start": "node dist/server/server.js"
+    "start": "set NODE_ENV=\"production\" && node dist/server/server.js"
   },
   "author": "Mark Oosterveld <mark@oosterveld.org>",
   "license": "ISC",
